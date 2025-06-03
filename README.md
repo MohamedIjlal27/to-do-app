@@ -1,50 +1,102 @@
-# Welcome to your Expo app 👋
+# Todo App with React Native & Expo 📝
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, feature-rich Todo application built with React Native and Expo, featuring a beautiful UI with dark/light theme support.
 
-## Get started
+## Features ✨
 
-1. Install dependencies
+- **Complete Todo Management**
+  - Create todos with title and description
+  - Edit existing todos
+  - Mark todos as complete/incomplete
+  - Delete todos
+  - Timestamp tracking with "Edited" indicator
 
+- **Modern UI/UX**
+  - Dark/light theme support
+  - System theme detection
+  - Beautiful animations and transitions
+  - Responsive keyboard handling
+  - Clean and intuitive interface
+
+- **Data Persistence**
+  - Automatic saving of todos
+  - Persists across app restarts
+  - Efficient AsyncStorage implementation
+
+## Tech Stack 🛠
+
+- React Native
+- Expo
+- TypeScript
+- AsyncStorage
+- React Context API
+- Expo Vector Icons
+
+## Getting Started 🚀
+
+1. Clone the repository
+   ```bash
+   git clone [your-repo-url]
+   cd todo-app
+   ```
+
+2. Install dependencies
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Start the development server
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Project Structure 📁
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+todo-app/
+├── app/                   # App directory (Expo Router)
+│   ├── screens/          # Screen components
+│   └── _layout.tsx       # Root layout
+├── components/           # Reusable components
+│   ├── CreateTodo.tsx
+│   ├── Header.tsx
+│   └── TodoList.tsx
+├── context/             # React Context
+│   └── ThemeContext.tsx
+├── styles/             # Component styles
+│   ├── createTodo.styles.ts
+│   ├── header.styles.ts
+│   ├── todoList.styles.ts
+│   └── todoScreen.styles.ts
+└── utils/              # Utility functions
+    └── storage.ts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Features in Detail 🔍
 
-## Learn more
+### Todo Management
+- Create new todos with title and optional description
+- Edit existing todos with full update capability
+- Mark todos as complete/incomplete with visual feedback
+- Delete unwanted todos
+- Automatic timestamp tracking
+- "Edited" indicator for modified todos
 
-To learn more about developing your project with Expo, look at the following resources:
+### Theme Support
+- Automatic system theme detection
+- Manual theme toggle with sun/moon icons
+- Consistent theming across all components
+- Smooth theme transitions
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Data Persistence
+- Automatic saving of todos using AsyncStorage
+- Efficient data loading on app start
+- Error handling for storage operations
 
-## Join the community
+## Contributing 🤝
 
-Join our community of developers creating universal apps.
+Feel free to open issues and pull requests for any improvements you want to add.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## License 📄
+
+MIT License - feel free to use this project for your own learning or as a base for your todo app.
