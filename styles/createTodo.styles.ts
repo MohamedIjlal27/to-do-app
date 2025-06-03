@@ -17,6 +17,21 @@ export const createTodoStyles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  inputError: {
+    borderWidth: 1,
+    borderColor: '#FF5252',
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  characterCount: {
+    fontSize: 12,
+    textAlign: 'right',
+    marginTop: -6,
+    marginBottom: 4,
+  },
   addButton: {
     backgroundColor: '#007AFF',
     padding: 15,

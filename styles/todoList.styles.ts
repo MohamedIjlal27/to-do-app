@@ -74,17 +74,51 @@ export const todoListStyles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  deleteModalContent: {
+    alignItems: 'center',
+    paddingTop: 10,
+  },
+  deleteIcon: {
+    marginBottom: 10,
+  },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
   },
+  deleteMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  deleteTodoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
   editInput: {
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     fontSize: 16,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: '#FF5252',
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: -8,
+    marginLeft: 4,
+    marginBottom: 8,
+  },
+  characterCount: {
+    fontSize: 12,
+    textAlign: 'right',
+    marginTop: -8,
+    marginBottom: 12,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -103,6 +137,9 @@ export const todoListStyles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#4CAF50',
+  },
+  deleteConfirmButton: {
+    backgroundColor: '#FF5252',
   },
   modalButtonText: {
     color: '#ffffff',

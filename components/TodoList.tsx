@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   ScrollView,
@@ -29,22 +29,79 @@ export default function TodoList({
   const [editingTodo, setEditingTodo] = useState<TodoItem | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
+  const [editTitleError, setEditTitleError] = useState<string | null>(null);
+  const [deletingTodo, setDeletingTodo] = useState<TodoItem | null>(null);
+
+  useEffect(() => {
+    if (editTitle) {
+      validateEditTitle(editTitle);
+    }
+  }, [editTitle]);
 
   const handleStartEdit = (todo: TodoItem) => {
     setEditingTodo(todo);
     setEditTitle(todo.title);
     setEditDescription(todo.description);
+    setEditTitleError(null);
+  };
+
+  const validateEditTitle = (text: string): boolean => {
+    const trimmedText = text.trim();
+    if (trimmedText.length === 0) {
+      setEditTitleError('Title is required');
+      return false;
+    } else if (trimmedText.length < 3) {
+      setEditTitleError('Title must be at least 3 characters');
+      return false;
+    } else if (trimmedText.length > 50) {
+      setEditTitleError('Title must be less than 50 characters');
+      return false;
+    } else {
+      setEditTitleError(null);
+      return true;
+    }
+  };
+
+  const handleEditTitleChange = (text: string) => {
+    setEditTitle(text);
+    validateEditTitle(text);
+  };
+
+  const handleEditDescriptionChange = (text: string) => {
+    if (text.length <= 200) {
+      setEditDescription(text);
+    }
   };
 
   const handleSaveEdit = () => {
-    if (editingTodo && editTitle.trim()) {
-      onEditTodo(editingTodo.id, {
-        title: editTitle.trim(),
-        description: editDescription.trim()
-      });
-      setEditingTodo(null);
+    if (editingTodo) {
+      const trimmedTitle = editTitle.trim();
+      
+      if (validateEditTitle(trimmedTitle)) {
+        onEditTodo(editingTodo.id, {
+          title: trimmedTitle,
+          description: editDescription.trim()
+        });
+        handleCloseModal();
+      }
     }
   };
+
+  const handleCloseModal = () => {
+    setEditingTodo(null);
+    setEditTitle('');
+    setEditDescription('');
+    setEditTitleError(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deletingTodo) {
+      onDeleteTodo(deletingTodo.id);
+      setDeletingTodo(null);
+    }
+  };
+
+  const isEditSaveDisabled = !editTitle.trim() || editTitle.trim().length < 3;
 
   const renderTodoItem = (todo: TodoItem) => {
     const { id, title, description, completed, timestamp } = todo;
@@ -100,7 +157,7 @@ export default function TodoList({
         </TouchableOpacity>
         <TouchableOpacity
           style={todoListStyles.deleteButton}
-          onPress={() => onDeleteTodo(id)}
+          onPress={() => setDeletingTodo(todo)}
         >
           <Ionicons
             name="trash-outline"
@@ -122,7 +179,7 @@ export default function TodoList({
         visible={editingTodo !== null}
         transparent
         animationType="slide"
-        onRequestClose={() => setEditingTodo(null)}
+        onRequestClose={handleCloseModal}
       >
         <View style={todoListStyles.modalOverlay}>
           <View style={[
@@ -135,37 +192,60 @@ export default function TodoList({
             ]}>
               Edit Todo
             </Text>
-            <TextInput
-              style={[
-                todoListStyles.editInput,
-                { 
-                  backgroundColor: isDarkMode ? '#1a1a1a' : '#f5f5f5',
-                  color: isDarkMode ? '#ffffff' : '#000000' 
-                }
-              ]}
-              value={editTitle}
-              onChangeText={setEditTitle}
-              placeholder="Title"
-              placeholderTextColor={isDarkMode ? '#888888' : '#666666'}
-            />
-            <TextInput
-              style={[
-                todoListStyles.editInput,
-                { 
-                  backgroundColor: isDarkMode ? '#1a1a1a' : '#f5f5f5',
-                  color: isDarkMode ? '#ffffff' : '#000000' 
-                }
-              ]}
-              value={editDescription}
-              onChangeText={setEditDescription}
-              placeholder="Description"
-              placeholderTextColor={isDarkMode ? '#888888' : '#666666'}
-              multiline
-            />
+            <View>
+              <TextInput
+                style={[
+                  todoListStyles.editInput,
+                  editTitleError ? todoListStyles.inputError : null,
+                  { 
+                    backgroundColor: isDarkMode ? '#1a1a1a' : '#f5f5f5',
+                    color: isDarkMode ? '#ffffff' : '#000000' 
+                  }
+                ]}
+                value={editTitle}
+                onChangeText={handleEditTitleChange}
+                placeholder="Title"
+                placeholderTextColor={isDarkMode ? '#888888' : '#666666'}
+                maxLength={50}
+              />
+              {editTitleError && (
+                <Text style={[
+                  todoListStyles.errorText,
+                  { color: '#FF5252' }
+                ]}>
+                  {editTitleError}
+                </Text>
+              )}
+            </View>
+            <View>
+              <TextInput
+                style={[
+                  todoListStyles.editInput,
+                  { 
+                    backgroundColor: isDarkMode ? '#1a1a1a' : '#f5f5f5',
+                    color: isDarkMode ? '#ffffff' : '#000000' 
+                  }
+                ]}
+                value={editDescription}
+                onChangeText={handleEditDescriptionChange}
+                placeholder="Description (optional, max 200 characters)"
+                placeholderTextColor={isDarkMode ? '#888888' : '#666666'}
+                multiline
+                maxLength={200}
+              />
+              {editDescription.length > 150 && (
+                <Text style={[
+                  todoListStyles.characterCount,
+                  { color: editDescription.length >= 200 ? '#FF5252' : (isDarkMode ? '#888888' : '#666666') }
+                ]}>
+                  {`${editDescription.length}/200 characters`}
+                </Text>
+              )}
+            </View>
             <View style={todoListStyles.modalButtons}>
               <TouchableOpacity
                 style={[todoListStyles.modalButton, todoListStyles.cancelButton]}
-                onPress={() => setEditingTodo(null)}
+                onPress={handleCloseModal}
               >
                 <Text style={todoListStyles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
@@ -173,12 +253,66 @@ export default function TodoList({
                 style={[
                   todoListStyles.modalButton, 
                   todoListStyles.saveButton,
-                  { opacity: editTitle.trim() ? 1 : 0.5 }
+                  { opacity: isEditSaveDisabled ? 0.5 : 1 }
                 ]}
                 onPress={handleSaveEdit}
-                disabled={!editTitle.trim()}
+                disabled={isEditSaveDisabled}
               >
                 <Text style={todoListStyles.modalButtonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={deletingTodo !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setDeletingTodo(null)}
+      >
+        <View style={todoListStyles.modalOverlay}>
+          <View style={[
+            todoListStyles.modalContent,
+            todoListStyles.deleteModalContent,
+            { backgroundColor: isDarkMode ? '#2c2c2c' : '#ffffff' }
+          ]}>
+            <Ionicons
+              name="alert-circle-outline"
+              size={40}
+              color="#FF5252"
+              style={todoListStyles.deleteIcon}
+            />
+            <Text style={[
+              todoListStyles.modalTitle,
+              { color: isDarkMode ? '#ffffff' : '#000000' }
+            ]}>
+              Delete Todo
+            </Text>
+            <Text style={[
+              todoListStyles.deleteMessage,
+              { color: isDarkMode ? '#cccccc' : '#666666' }
+            ]}>
+              Are you sure you want to delete this todo?
+            </Text>
+            <Text style={[
+              todoListStyles.deleteTodoTitle,
+              { color: isDarkMode ? '#ffffff' : '#000000' }
+            ]}>
+              "{deletingTodo?.title}"
+            </Text>
+            <View style={todoListStyles.modalButtons}>
+              <TouchableOpacity
+                style={[todoListStyles.modalButton, todoListStyles.cancelButton]}
+                onPress={() => setDeletingTodo(null)}
+              >
+                <Text style={todoListStyles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[todoListStyles.modalButton, todoListStyles.deleteConfirmButton]}
+                onPress={handleConfirmDelete}
+              >
+                <Text style={todoListStyles.modalButtonText}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
